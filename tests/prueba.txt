@@ -1,0 +1,58 @@
+LDX #$00
+LDY #$00
+firstloop:
+  TXA
+  STA $0200,Y
+  PHA
+  INX
+  INY
+  CPY #$10
+  BNE firstloop
+secondloop:
+  PLA
+  STA $0200,Y
+  INY
+  CPY #$20
+  BNE secondloop
+
+
+;Segunda parte
+;BRK          ;Forces the generation of an interrupt
+;CLI          ;Clears the interrupt disable flag
+
+;LSR A           ;Logical shift right one bit
+;ROR A           ;Rotate right one bit
+
+;LDA #10         ;Load 10 ($0A) into the accumulator
+;LDX #LO LABEL   ;Load the LSB of a 16 bit address into X
+;LDY #HI LABEL   ;Load the MSB of a 16 bit address into Y
+
+;LDA $00         ;Load accumulator from $00
+;ASL ANSWER      ;Shift labelled location ANSWER left
+
+;STY $10,X       ;Save the Y register at location on zero page
+;AND TEMP,X      ;Logical AND accumulator with a zero page value
+
+;LDX $10,Y       ;Load the X register from a location on zero page
+;STX TEMP,Y      ;Store the X register in a location on zero page
+
+;BEQ LABEL       ;Branch if zero flag set to LABEL
+;BNE *+4         ;Skip over the following 2 byte instruction
+
+;JMP $1234       ;Jump to location $1234
+;JSR WIBBLE      ;Call subroutine WIBBLE
+
+;STA $3000,X     ;Store accumulator between $3000 and $30FF
+;ROR CRC,X       ;Rotate right one bit
+
+;AND $4000,Y     ;Perform a logical AND with a byte of memory
+;STA MEM,Y       ;Store accumulator in memory
+
+;JMP ($FFFC)     ;Force a power on reset
+;JMP (TARGET)    ;Jump via a labelled memory area
+
+;LDA ($40,X)     ;Load a byte indirectly from memory
+;STA (MEM,X)     ;Store accumulator indirectly into memory
+
+;LDA ($40),Y     ;Load a byte indirectly from memory
+;STA (DST),Y     ;Store accumulator indirectly into memory
