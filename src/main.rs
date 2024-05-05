@@ -1,22 +1,34 @@
-/* use std::env;
-use std::fs; */
-
-mod lexer;
 mod parser;
 
-//use crate::lexer::Lexer;
 use crate::parser::Parser;
-use crate::lexer::Token;
+use std::fmt;
 
+
+#[derive(Debug, PartialEq, Clone,)]
+pub enum Token {
+    Mnemonic(String),
+    Keyword(String),
+    HexNumber(String),
+    Identifier(String),
+    Punctuation(char),
+}
+
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Token::Mnemonic(s) => write!(f, "{}", s),
+            Token::Keyword(s) => write!(f, "{}", s),
+            Token::HexNumber(n) => write!(f, "{}", n),
+            Token::Identifier(s) => write!(f, "{}", s),
+            Token::Punctuation(c) => write!(f, "{}", c),
+        }
+    }
+}
 fn main() {
-    /* let input = fs::read_to_string(env::args().nth(1).expect("Expected file argument"))
-        .expect("Failed to read file"); */
 
-    /* let mut lexer = Lexer::new(input);
-    let tokens = lexer.lex();
-    println!("{:?}", tokens); */
 
-let tokens_correctos_1 = vec![
+    let tokens_correctos_1 = vec![
         Token::Mnemonic("LDX".to_string()),
         Token::Punctuation('#'),
         Token::Punctuation('$'),
@@ -61,7 +73,7 @@ let tokens_correctos_1 = vec![
 
 
     let mut parser = Parser::new(tokens_correctos_1);
-    println!("{}", parser.start());
+    println!("Is the grammar valid? {}", parser.start());
 
     let tokens_correctos_2 = vec![
         Token::Mnemonic("LDX".to_string()),
@@ -87,7 +99,7 @@ let tokens_correctos_1 = vec![
     ];
 
     let mut parser = Parser::new(tokens_correctos_2);
-    println!("{}", parser.start());
+    println!("Is the grammar valid? {}", parser.start());
 
     let tokens_correctos_3 = vec![
         Token::Mnemonic("LDX".to_string()),
@@ -96,7 +108,7 @@ let tokens_correctos_1 = vec![
         Token::HexNumber(01.to_string()),
         Token::Mnemonic("LDA".to_string()),
         Token::Punctuation('#'),
-        // Token::Punctuation('$'),
+        Token::Punctuation('$'),
         Token::HexNumber("aa".to_string()),
         Token::Mnemonic("STA".to_string()),
         Token::Punctuation('$'),
@@ -112,10 +124,10 @@ let tokens_correctos_1 = vec![
     ];
 
     let mut parser = Parser::new(tokens_correctos_3);
-    println!("{}", parser.start());
+    println!("Is the grammar valid? {}", parser.start());
 
 
-    let _tokens_incorrectos_1 = vec![
+    let tokens_incorrectos_1 = vec![
         Token::Mnemonic("LDY".to_string()),
         Token::Punctuation('#'),
         Token::Punctuation('$'),
@@ -128,8 +140,8 @@ let tokens_correctos_1 = vec![
         Token::Identifier("Y".to_string()),
     ];
 
-    // let mut parser = Parser::new(tokens_incorrectos_1);
-    // println!("{}", parser.start());
+    let mut _parser = Parser::new(tokens_incorrectos_1);
+    // println!("Is the grammar valid? {}", parser.start());
 
     let _tokens_incorrectos_2 = vec![
         Token::Mnemonic("LDX".to_string()),
