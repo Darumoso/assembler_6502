@@ -109,7 +109,7 @@ fn main() {
         Token::Mnemonic("LDX".to_string()),
         Token::Punctuation('#'),
         Token::Punctuation('$'),
-        Token::HexNumber(01.to_string()),
+        Token::HexNumber("01".to_string()),
         Token::Mnemonic("LDA".to_string()),
         Token::Punctuation('#'),
         Token::Punctuation('$'),

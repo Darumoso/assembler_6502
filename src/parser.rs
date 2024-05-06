@@ -1,13 +1,13 @@
 //Calculate first set of a grammar
 #![allow(dead_code)]
 use crate::Token;
-// use ptree::{print_tree_with, PrintConfig, TreeBuilder};
+use ptree::TreeBuilder;
 
 
 pub struct Parser {
     input: Vec<Token>,
     current: usize,
-    // parse_tree: TreeBuilder,
+    parse_tree: TreeBuilder,
 }
 
 impl Parser{
@@ -15,7 +15,7 @@ impl Parser{
         Parser {
             input,
             current: 0,
-            // parse_tree: TreeBuilder::new("Parse Tree".to_string()),
+            parse_tree: TreeBuilder::new("Parse Tree".to_string()),
         }
     }
 
@@ -29,29 +29,18 @@ impl Parser{
     }
 
     pub fn start(&mut self) -> bool{
-        // println!("Start: {:?}", self.input[self.current]);
         if !self.statement_list(){
             println!("=============================");
             panic!("Expected statement\n =============================");
         }
-        // let tree = self.parse_tree.build();
-
-        /* let config = {
-            let mut config = PrintConfig::from_env();
-            config.indent = 4;
-            config
-        };
-        let _prueba = print_tree_with(&tree, &config); */
         true
     }
 
     fn statement_list(&mut self) -> bool {
-        // self.parse_tree.begin_child("Statement List".to_string());
+        self.parse_tree.begin_child("StatementList".to_string());
         if self.input.len() - 1 == self.current{
-            // println!("Statement List: {:?}", self.input[self.current]);
             return true;
         }
-        // println!("Statement List: {:?}", self.input[self.current]);
         if self.statement(){
             if !self.statement_list(){
                 println!("=============================");
@@ -59,13 +48,12 @@ impl Parser{
             }
             return true;
         }
-        // self.parse_tree.begin_child("Epsilon".to_string());
+        self.parse_tree.begin_child("Epsilon".to_string());
         true
     }
 
     fn statement(&mut self) -> bool {
-        // self.parse_tree.begin_child("Statement".to_string());
-        // println!("Statement: {:?}", self.input[self.current]);
+        self.parse_tree.begin_child("Statement".to_string());
         if self.instruction(){
             return true;
         }
@@ -81,13 +69,7 @@ impl Parser{
     fn label(&mut self) -> bool {
         // println!("Label: {:?}", self.input[self.current]);
         if self.identifier(){
-            // self.parse_tree.begin_child("Label".to_string());
-            // self.parse_tree.begin_child(self.input[self.current - 1].to_string());
             if self.peek(Token::Punctuation(':')){
-                // self.parse_tree.begin_child(":".to_string());
-                // for _ in 0..6{
-                //     self.parse_tree.end_child();
-                // }
                 return true;
             }
             else {
@@ -99,8 +81,7 @@ impl Parser{
     }
 
     fn instruction(&mut self) -> bool {
-        // println!("Instruction: {:?}", self.input[self.current]);
-        // self.parse_tree.begin_child("Instruction".to_string());
+        self.parse_tree.begin_child("Instruction".to_string());
         if self.mnemonic(){
             if self.addressing(){
                 return true;
@@ -114,7 +95,6 @@ impl Parser{
     }
 
     fn mnemonic(&mut self) -> bool {
-        // println!("Mnemonic: {:?}", self.input[self.current]);
         if self.peek(Token::Mnemonic("LDA".to_string())) ||
             self.peek(Token::Mnemonic("ADC".to_string())) ||
             self.peek(Token::Mnemonic("AND".to_string())) ||
@@ -171,20 +151,21 @@ impl Parser{
             self.peek(Token::Mnemonic("BNE".to_string())) ||
             self.peek(Token::Mnemonic("DEX".to_string())) ||
             self.peek(Token::Mnemonic("PLA".to_string())){
-            // self.parse_tree.begin_child(self.input[self.current - 1].to_string());
+            self.parse_tree.begin_child("Mnemonic".to_string());
+            self.parse_tree.add_empty_child(self.input[self.current - 1].to_string());
             return true;
         }
         false
     }
 
     fn addressing(&mut self) -> bool {
-        // println!("Addressing: {:?}", self.input[self.current]);
         if self.identifier(){
+            self.parse_tree.begin_child("Addressing".to_string());
             return true;
         }
 
         if self.peek(Token::Punctuation('#')){
-            // self.parse_tree.begin_child("#".to_string());
+            self.parse_tree.add_empty_child("#".to_string());
             if self.number(){
                 if self.peek(Token::Punctuation(',')){
                     if self.addressing2(){
@@ -225,22 +206,20 @@ impl Parser{
     }
 
     fn number(&mut self) -> bool {
-        // println!("Number: {:?}", self.input[self.current]);
         if self.peek(Token::Punctuation('$')){
-            // self.parse_tree.begin_child("$".to_string());
-                // println!("HexNumber: {:?}", self.input[self.current]);
+            self.parse_tree.begin_child("Number".to_string());
+            self.parse_tree.add_empty_child("$".to_string());
             match &self.input[self.current]{
                 Token::HexNumber(_) => {
                     if self.current != self.input.len() - 1{
                         self.current += 1;
                     }
-                    // self.parse_tree.begin_child(self.input[self.current - 1].to_string());
+                    self.parse_tree.add_empty_child(self.input[self.current - 1].to_string());
                     return true
                 },
                 _ => {
                     println!("=============================");
                     panic!("Expected HexNumber after '$'\n =============================");
-                    // return false
                 },
             };
         }
@@ -259,7 +238,6 @@ impl Parser{
     }
 
     fn identifier(&mut self) -> bool {
-        // println!("Identifier: {:?}", self.input[self.current]);
         match &self.input[self.current]{
             Token::Identifier(_) => {
                 if self.current != self.input.len() - 1{
@@ -272,8 +250,9 @@ impl Parser{
     }
 
     fn define(&mut self) -> bool {
-        // println!("Define: {:?}", self.input[self.current]);
         if self.peek(Token::Keyword("define".to_string())){
+            self.parse_tree.begin_child("Define".to_string());
+            self.parse_tree.add_empty_child("define".to_string());
             match &self.input[self.current]{
                 Token::Identifier(_) => {
                     if self.current != self.input.len() - 1{
