@@ -1,6 +1,0 @@
-    ;Hello!
-    ;This is a comment.
-;Comments are ignored by the assembler.
-;Adds 10 to register A
-ADC A, 10
-ADC A,10

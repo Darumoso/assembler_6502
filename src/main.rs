@@ -73,7 +73,9 @@ fn main() {
 
 
     let mut parser = Parser::new(tokens_correctos_1);
-    println!("Is the grammar valid? {}", parser.start());
+    if parser.start() {
+        println!("The grammar is valid");
+    }
 
     let tokens_correctos_2 = vec![
         Token::Mnemonic("LDX".to_string()),
@@ -99,7 +101,9 @@ fn main() {
     ];
 
     let mut parser = Parser::new(tokens_correctos_2);
-    println!("Is the grammar valid? {}", parser.start());
+    if parser.start() {
+        println!("The grammar is valid");
+    }
 
     let tokens_correctos_3 = vec![
         Token::Mnemonic("LDX".to_string()),
@@ -124,8 +128,9 @@ fn main() {
     ];
 
     let mut parser = Parser::new(tokens_correctos_3);
-    println!("Is the grammar valid? {}", parser.start());
-
+    if parser.start() {
+        println!("The grammar is valid");
+    }
 
     let tokens_incorrectos_1 = vec![
         Token::Mnemonic("LDY".to_string()),
