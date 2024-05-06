@@ -95,7 +95,7 @@ firstloop
 This error isn't reachable by the parser, to show it line 150 on main file must
 be commented and lines 168-169 must be uncommented
 ```6502
-LDY #$00
+LDY #00
 firstloop:
     STA $0200,Y
 ```
